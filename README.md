@@ -8,4 +8,4 @@ The aim is to give an interactive worlwide view of countries' temperatures durin
 
 ## Requirements
 
-Use Chrome browser with [Allow-Control-Allow-Origin: *](https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi?hl=en) extension. Some parts of the code needs to fetch data from other servers.
+Use Chrome browser with [Allow-Control-Allow-Origin: *](https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi?hl=en) extension. Some parts of the code need to fetch data from other servers.
