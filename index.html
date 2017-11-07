@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Climate Change</title>
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+   		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
+   		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    	<style type="text/css">.leaflet-container{background-color:#c5e8ff;}</style>
+		<script src="https://d3js.org/d3.v3.js"></script>
+	</head>
+
+
+	<body>		
+		<h1>Climate Change</h1>
+		<div id="map" style="width: '100%'; height: 500px"></div>
+
+		<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    	<script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
+		<script>
+	        var myGeoJSONPath = 'http://www.alexandrepoussard.com/custom.geo.json';
+		   
+	        
+	        //Add the name of a country into a popup when click
+	        function onEachFeature(feature, layer) {
+			       layer.bindPopup(feature.properties.name);
+			       return feature.properties.name;
+			}
+
+			//Style the map
+			let mapStyle = {
+		        	stroke: true,
+		            weight: 0.75,
+	    			opacity: 1,
+		            fill: true,
+		            fillColor: '#fff', //Will implement function depending on data temperatures
+		            fillOpacity: 1
+			}
+
+			//Instanciate the map
+	        $.getJSON(myGeoJSONPath, function(data) {
+	            var map = L.map('map').setView([40, 0], 1.5);
+
+	            L.geoJson(data, {
+	            	zoomAnimationThreshold: 100,
+	                clickable: true,
+	                style: mapStyle,
+	                onEachFeature: onEachFeature
+	            }).addTo(map);
+	        })
+		        .done(function(data){
+		        	console.log("Success");
+
+		        })
+		        .fail(function(){
+		        	alert("Error loading JSON");
+	        });
+
+    </script>
+	</body>
+</html>

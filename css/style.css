@@ -1,0 +1,14 @@
+body{
+	background-color: grey;
+}
+
+h1{
+	padding-top: 10px;
+	padding-bottom: 10px;
+	text-align: center;
+}
+
+
+.leaflet-container{
+	background-color:#c5e8ff;
+}
