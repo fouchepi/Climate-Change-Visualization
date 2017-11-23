@@ -41,9 +41,9 @@
 	        const path = d3.geoPath()
     			.projection(projection);
 
-    		const color = d3.scaleLog()
-				.range(["hsl(62,100%,90%)", "hsl(228,30%,20%)"])
-				.interpolate(d3.interpolateHcl);
+			const color = d3.scaleLinear()
+				.range(["hsl(62,100%,90%)", "hsl(228,30%,20%)"]) //"hsl(62,100%,90%)", "hsl(228,30%,20%)"
+				.interpolate(d3.interpolateHsl);
 
 			const svg = d3.select('#map').append('svg')
 	        	.attr('width', width)
@@ -58,26 +58,31 @@
 			var g = svg.append("g");
 
 			d3.csv(temp_country, function(error, data_country) {
-	    		d3.csv(temp_major_city, function(error, data) {
+	    		d3.csv(temp_major_city, function(error, data_city) {
 			        d3.json(world_json, function(error, json) {
 						if (error) throw error;
+
 						const countries = json;
+						let dataCountryName = [];
+						let dataCountryTemperature = [];
+						let jsonCountryName = [];
 						
-						for (let i = 0; i < data.length; i++) {
-							let dataCountryName = data[i].Country;
-							let dataCountryTemperature = data[i].AverageTemperature;
+						for (let i = 0; i < data_country.length; i++) {
+							dataCountryName = data_country[i].Country;
+							dataCountryTemperature = data_country[i].AverageTemperature;
 
 							for (let j = 0; j < countries.features.length; j++) {
-								let jsonCountryName = countries.features[j].properties.sovereignt;
+								jsonCountryName = countries.features[j].properties.sovereignt;
 								if (jsonCountryName === dataCountryName) {
 									countries.features[j].properties.sovereignt = dataCountryName;
+									countries.features[j].properties.AverageTemperature = dataCountryTemperature;
 									break;
 								}
 							}
 						}
 
-						var temperatures = data.map((d) => d.AverageTemperature).sort((a, b) => a - b);
-						color.domain([d3.quantile(temperatures, .01), d3.quantile(temperatures, .99)]);
+						var av_temperatures = data_country.map((d) => d.AverageTemperature).sort((a, b) => a - b);
+						color.domain([d3.quantile(av_temperatures, .01), d3.quantile(av_temperatures, .99)]);
 
 						g.selectAll("path")
 							.data(countries.features)
@@ -85,12 +90,14 @@
 							.append("path")
 							.attr("class", "countries")
 							.attr("d", path)
+							.on("click", clicked)
 							.style("fill", (d) => {
-								// const AverageTemperature = d.properties.AverageTemperature;
-								// return color(AverageTemperature);
-								return 'white';
-							})
-							.on("click", clicked);
+								const AverageTemperature = d.properties.AverageTemperature;
+								return color(AverageTemperature);
+							});
+							
+
+						console.log(color.domain());
 
 						g.append("path")
 							.datum(topojson.mesh(json, countries, (a, b) => a !== b))
