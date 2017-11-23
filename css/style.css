@@ -8,13 +8,13 @@ h1{
 	text-align: center;
 }
 
-#map{
-	background-color: rgba(135,206,250, 0.5);
+#map g{
 	stroke:#000;
 	stroke-width: 0.2;
 }
 
 #map svg {
+    background-color: rgba(135,206,250, 0.5);
     display:block;
     margin:0 auto;
 }
@@ -38,4 +38,9 @@ h1{
 
 .slider:hover {
     opacity: 1;
+}
+
+.background {
+    fill: none;
+    pointer-events: all;
 }

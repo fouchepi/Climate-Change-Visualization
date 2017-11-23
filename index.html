@@ -11,14 +11,15 @@
 	<body>		
 		<h1>Climate Change</h1>
 		<div id="map" style="width:'100%'; height: 500px;"></div>
-		<div id="slidecontainer">
+		<!-- <div id="slidecontainer">
 			<input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-		</div>
+		</div> -->
 		
 		<!-- 
 		TODO:
-			- Resize function + zoom with map rescale inside the div
-			- Upload ou les données temperatures ? Amazon EC2 ? Mon serveur est limité en taille à l'upload.
+			- Resize function
+			- Slider linear avec années
+			- Choropleth map countries
 		-->
 		
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -27,9 +28,11 @@
 		<script type="text/javascript">
 			const world_json = 'http://www.alexandrepoussard.com/world.geo.json';
 			const temp_major_city = 'http://www.alexandrepoussard.com/major_city_temp_season.csv';
+			const temp_country = 'http://www.alexandrepoussard.com/country_temp_season.csv';
 			let width = $("#map").parent().width();
 	        let height = $("#map").parent().height();
 	        let scale = (width - 1) / 2.2 / Math.PI;
+	        let centered;
 
 	        const projection = d3.geoEquirectangular()
 	        	.scale(scale)
@@ -47,53 +50,88 @@
 	        	.attr('height', height)
 	        	.append("g");
 
-    		d3.csv(temp_major_city, function(error, data) {
-		        d3.json(world_json, function(error, json) {
-					if (error) throw error;
-					const countries = json;
-					
-					for (let i = 0; i < data.length; i++) {
-						let dataCountryName = data[i].Country;
-						let dataCountryTemperature = data[i].AverageTemperature;
+	    	svg.append("rect")
+			    .attr("class", "background")
+			    .attr("width", width)
+			    .attr("height", height);
 
-						for (let j = 0; j < countries.features.length; j++) {
-							let jsonCountryName = countries.features[j].properties.sovereignt;
-							if (jsonCountryName === dataCountryName) {
-								countries.features[j].properties.sovereignt = dataCountryName;
-								break;
+			var g = svg.append("g");
+
+			d3.csv(temp_country, function(error, data_country) {
+	    		d3.csv(temp_major_city, function(error, data) {
+			        d3.json(world_json, function(error, json) {
+						if (error) throw error;
+						const countries = json;
+						
+						for (let i = 0; i < data.length; i++) {
+							let dataCountryName = data[i].Country;
+							let dataCountryTemperature = data[i].AverageTemperature;
+
+							for (let j = 0; j < countries.features.length; j++) {
+								let jsonCountryName = countries.features[j].properties.sovereignt;
+								if (jsonCountryName === dataCountryName) {
+									countries.features[j].properties.sovereignt = dataCountryName;
+									break;
+								}
 							}
 						}
-					}
 
-					var temperatures = data.map((d) => d.AverageTemperature).sort((a, b) => a - b);
-					color.domain([d3.quantile(temperatures, .01), d3.quantile(temperatures, .99)]);
+						var temperatures = data.map((d) => d.AverageTemperature).sort((a, b) => a - b);
+						color.domain([d3.quantile(temperatures, .01), d3.quantile(temperatures, .99)]);
 
-					svg.selectAll("path")
-						.data(countries.features)
-						.enter()
-						.append("path")
-						.attr("class", "countries")
-						.attr("d", path)
-						.style("fill", (d) => {
-							// const AverageTemperature = d.properties.AverageTemperature;
-							// return color(AverageTemperature);
-							return 'white';
-						});
+						g.selectAll("path")
+							.data(countries.features)
+							.enter()
+							.append("path")
+							.attr("class", "countries")
+							.attr("d", path)
+							.style("fill", (d) => {
+								// const AverageTemperature = d.properties.AverageTemperature;
+								// return color(AverageTemperature);
+								return 'white';
+							})
+							.on("click", clicked);
 
-					svg.append("path")
-						.datum(topojson.mesh(json, countries, (a, b) => a !== b))
-						.attr("class", "countries-boundary")
-						.attr("d", path);
+						g.append("path")
+							.datum(topojson.mesh(json, countries, (a, b) => a !== b))
+							.attr("class", "countries-boundary")
+							.attr("d", path);
 
-					svg.selectAll("text")
-						.data(countries.features)
-						.enter().append("text")
-						.attr("transform", (d) => "translate(" + path.centroid(d) + ")")
-						.attr("dx", -5)
-						.attr('font-size', '35%')
-						.text((d) => d.properties.name);
+						g.selectAll("text")
+							.data(countries.features)
+							.enter().append("text")
+							.attr("transform", (d) => "translate(" + path.centroid(d) + ")")
+							.attr("dx", -5)
+							.attr('font-size', '35%')
+							.text((d) => d.properties.name);
+					
+						function clicked(d) {
+							var x, y, k;
+
+							if (d && centered !== d) {
+								var centroid = path.centroid(d);
+								x = centroid[0];
+								y = centroid[1];
+								k = 4;
+								centered = d;
+							} else {
+								x = width / 2;
+								y = height / 2;
+								k = 1;
+								centered = null;
+							}
+
+							g.selectAll("path")
+								.classed("active", centered && function(d) { return d === centered; });
+
+							g.transition()
+								.duration(750)
+								.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+								.style("stroke-width", 0.2 / k + "px");
+						}
+					});
 				});
 			});
-    </script>
+    	</script>
 	</body>
 </html>
