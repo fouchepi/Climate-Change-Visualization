@@ -3,59 +3,97 @@
 <html>
 	<head>
 		<title>Climate Change</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 		<link rel="stylesheet" type="text/css" href="css/style.css">
-   		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
-   		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-    	<style type="text/css">.leaflet-container{background-color:#c5e8ff;}</style>
-		<script src="https://d3js.org/d3.v3.js"></script>
 	</head>
 
 
 	<body>		
 		<h1>Climate Change</h1>
-		<div id="map" style="width: '100%'; height: 500px"></div>
+		<div id="map" style="width:'100%'; height: 500px;"></div>
+		<div id="slidecontainer">
+			<input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+		</div>
+		
+		<!-- 
+		TODO:
+			- Resize function + zoom with map rescale inside the div
+			- Upload ou les données temperatures ? Amazon EC2 ? Mon serveur est limité en taille à l'upload.
+		-->
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+		<script src="https://d3js.org/topojson.v1.min.js"></script>
+		<script type="text/javascript">
+			const world_json = 'http://www.alexandrepoussard.com/world.geo.json';
+			const temp_major_city = 'http://www.alexandrepoussard.com/major_city_temp_season.csv';
+			let width = $("#map").parent().width();
+	        let height = $("#map").parent().height();
+	        let scale = (width - 1) / 2.2 / Math.PI;
 
-		<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-    	<script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
-		<script>
-	        var myGeoJSONPath = 'http://www.alexandrepoussard.com/custom.geo.json';
-		   
-	        
-	        //Add the name of a country into a popup when click
-	        function onEachFeature(feature, layer) {
-			       layer.bindPopup(feature.properties.name);
-			       return feature.properties.name;
-			}
+	        const projection = d3.geoEquirectangular()
+	        	.scale(scale)
+	        	.translate([width / 2, height / 2]);
 
-			//Style the map
-			let mapStyle = {
-		        	stroke: true,
-		            weight: 0.75,
-	    			opacity: 1,
-		            fill: true,
-		            fillColor: '#fff', //Will implement function depending on data temperatures
-		            fillOpacity: 1
-			}
+	        const path = d3.geoPath()
+    			.projection(projection);
 
-			//Instanciate the map
-	        $.getJSON(myGeoJSONPath, function(data) {
-	            var map = L.map('map').setView([40, 0], 1.5);
+    		const color = d3.scaleLog()
+				.range(["hsl(62,100%,90%)", "hsl(228,30%,20%)"])
+				.interpolate(d3.interpolateHcl);
 
-	            L.geoJson(data, {
-	            	zoomAnimationThreshold: 100,
-	                clickable: true,
-	                style: mapStyle,
-	                onEachFeature: onEachFeature
-	            }).addTo(map);
-	        })
-		        .done(function(data){
-		        	console.log("Success");
+			const svg = d3.select('#map').append('svg')
+	        	.attr('width', width)
+	        	.attr('height', height)
+	        	.append("g");
 
-		        })
-		        .fail(function(){
-		        	alert("Error loading JSON");
-	        });
+    		d3.csv(temp_major_city, function(error, data) {
+		        d3.json(world_json, function(error, json) {
+					if (error) throw error;
+					const countries = json;
+					
+					for (let i = 0; i < data.length; i++) {
+						let dataCountryName = data[i].Country;
+						let dataCountryTemperature = data[i].AverageTemperature;
 
+						for (let j = 0; j < countries.features.length; j++) {
+							let jsonCountryName = countries.features[j].properties.sovereignt;
+							if (jsonCountryName === dataCountryName) {
+								countries.features[j].properties.sovereignt = dataCountryName;
+								break;
+							}
+						}
+					}
+
+					var temperatures = data.map((d) => d.AverageTemperature).sort((a, b) => a - b);
+					color.domain([d3.quantile(temperatures, .01), d3.quantile(temperatures, .99)]);
+
+					svg.selectAll("path")
+						.data(countries.features)
+						.enter()
+						.append("path")
+						.attr("class", "countries")
+						.attr("d", path)
+						.style("fill", (d) => {
+							// const AverageTemperature = d.properties.AverageTemperature;
+							// return color(AverageTemperature);
+							return 'white';
+						});
+
+					svg.append("path")
+						.datum(topojson.mesh(json, countries, (a, b) => a !== b))
+						.attr("class", "countries-boundary")
+						.attr("d", path);
+
+					svg.selectAll("text")
+						.data(countries.features)
+						.enter().append("text")
+						.attr("transform", (d) => "translate(" + path.centroid(d) + ")")
+						.attr("dx", -5)
+						.attr('font-size', '35%')
+						.text((d) => d.properties.name);
+				});
+			});
     </script>
 	</body>
 </html>
