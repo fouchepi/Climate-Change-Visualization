@@ -11,23 +11,27 @@
 	<body>
 		<div class="container">
 			<h1>Climate Change</h1>
-
-				<div class="form-group" id="season-container">
-					<h>Please Choose a season:</h><br>
+			<div class="row">
+				<div class="col-sm" id="season-container">
+		      		<p>Please choose a season: </p>
 					<label class="checkbox-inline"><input type="checkbox" value="Spring"> Spring</label>
 					<label class="checkbox-inline"><input type="checkbox" value="Summer"> Summer</label>
 					<label class="checkbox-inline"><input type="checkbox" value="Autumn"> Autumn</label>
 					<label class="checkbox-inline"><input type="checkbox" value="Winter"> Winter</label>
-				</div>
-			
 
-				<div class="row" id="slider-container">
-					<p>You can select a year or use the animation:</p>
-					<input type="range" min="1800" max="2013" value="1907" class="slider" id="myRange">
+					<p></p>
+					<p>You can select a year and/or use the animation: </p>
+					<input type="range" min="1800" max="2013" value="1907" class="slider" id="myRange" onchange="showYear(this.value);">
 					<button type="button">Play</button>
+		    	</div>
+			
+				<div class="col-sm" id="chart-container">
+			      	<p onclick="graph()">Land Average Temperature Summer (Celsius):</p>
+					<div id="chart"></div>
 				</div>
+			</div>
 		</div>
-		<div id="map" style="width:'100%'; height: 500px;"></div>
+		<div id="map" style="width:'100%'; height: 450px;"></div>
 		
 		
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -37,7 +41,7 @@
 			const world_json = 'http://www.alexandrepoussard.com/world.geo.json';
 			const temp_major_city = 'http://www.alexandrepoussard.com/major_city_temp_season.csv';
 			const temp_country = 'http://www.alexandrepoussard.com/country_temp_season.csv';
-			let playing = false;
+			const temp_season = 'http://www.alexandrepoussard.com/global_temp_season2.csv';
 			let width = $("#map").parent().width();
 	        let height = $("#map").parent().height();
 	        let scale = (width - 1) / 2.2 / Math.PI;
@@ -65,6 +69,66 @@
 			    .attr("height", height);
 
 			var g = svg.append("g");
+
+			function showYear(val) {
+          		alert(val);
+        	}
+
+        	function graph() {
+				var graph_svg = d3.select("#chart").append("svg").attr("width", "500").attr("height", "150"),
+				margin = {top: 20, right: 20, bottom: 30, left: 50},
+				width = +graph_svg.attr("width") - margin.left - margin.right,
+				height = +graph_svg.attr("height") - margin.top - margin.bottom,
+				g = graph_svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+			  	var parseTime = d3.timeParse("%Y");
+
+			  	var x = d3.scaleTime()
+			  		.rangeRound([0, width]);
+
+			  	var y = d3.scaleLinear()
+			  		.rangeRound([height, 0]);
+
+			  	var line = d3.line()
+			  		.x(function(d) { return x(d.date); })
+			  		.y(function(d) { return y(d.close); });
+
+			  	d3.csv(temp_season, function(d) {
+			    	d.date = parseTime(d.year);
+			    	d.close = +d.LandAverageTemperature;
+			    	return d;
+			  	}, function(error, data) {
+			    	if (error) throw error;
+				    data = data.filter(d => d.season == "summer")
+				    console.log(data)
+				    x.domain(d3.extent(data, function(d) { return d.date; }));
+				    y.domain(d3.extent(data, function(d) { return d.close; }));
+
+				    g.append("g")
+				    	.attr("transform", "translate(0," + height + ")")
+				    	.call(d3.axisBottom(x))
+				    	.select(".domain")
+				    	.remove();
+
+				    g.append("g")
+					    .call(d3.axisLeft(y))
+					    .append("text")
+					    .attr("fill", "#000")
+					    .attr("transform", "rotate(-90)")
+					    .attr("y", 6)
+					    .attr("dy", "0.71em")
+					    .attr("text-anchor", "end");
+
+				    g.append("path")
+					    .datum(data)
+					    .attr("fill", "none")
+					    .attr("stroke", "steelblue")
+					    .attr("stroke-linejoin", "round")
+					    .attr("stroke-linecap", "round")
+					    .attr("stroke-width", 1.5)
+					    .attr("d", line);
+			  	});
+			}
 
 			d3.csv(temp_country, function(error, data_country) {
 	    		d3.csv(temp_major_city, function(error, data_city) {
@@ -139,8 +203,10 @@
 
 							g.transition()
 								.duration(750)
-								.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+								.attr("transform", "translate(" + width / 2 + "," + (height / 2) + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
 								.style("stroke-width", 0.2 / k + "px");
+
+							// graph();
 						}
 					});
 				});
