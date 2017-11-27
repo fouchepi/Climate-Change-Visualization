@@ -8,19 +8,27 @@
 	</head>
 
 
-	<body>		
-		<h1>Climate Change</h1>
+	<body>
+		<div class="container">
+			<h1>Climate Change</h1>
+
+				<div class="form-group" id="season-container">
+					<h>Please Choose a season:</h><br>
+					<label class="checkbox-inline"><input type="checkbox" value="Spring"> Spring</label>
+					<label class="checkbox-inline"><input type="checkbox" value="Summer"> Summer</label>
+					<label class="checkbox-inline"><input type="checkbox" value="Autumn"> Autumn</label>
+					<label class="checkbox-inline"><input type="checkbox" value="Winter"> Winter</label>
+				</div>
+			
+
+				<div class="row" id="slider-container">
+					<p>You can select a year or use the animation:</p>
+					<input type="range" min="1800" max="2013" value="1907" class="slider" id="myRange">
+					<button type="button">Play</button>
+				</div>
+		</div>
 		<div id="map" style="width:'100%'; height: 500px;"></div>
-		<!-- <div id="slidecontainer">
-			<input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-		</div> -->
 		
-		<!-- 
-		TODO:
-			- Resize function
-			- Slider linear avec années
-			- Choropleth map countries
-		-->
 		
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script src="https://d3js.org/d3.v4.min.js"></script>
@@ -29,6 +37,7 @@
 			const world_json = 'http://www.alexandrepoussard.com/world.geo.json';
 			const temp_major_city = 'http://www.alexandrepoussard.com/major_city_temp_season.csv';
 			const temp_country = 'http://www.alexandrepoussard.com/country_temp_season.csv';
+			let playing = false;
 			let width = $("#map").parent().width();
 	        let height = $("#map").parent().height();
 	        let scale = (width - 1) / 2.2 / Math.PI;
@@ -95,9 +104,6 @@
 								const AverageTemperature = d.properties.AverageTemperature;
 								return color(AverageTemperature);
 							});
-							
-
-						console.log(color.domain());
 
 						g.append("path")
 							.datum(topojson.mesh(json, countries, (a, b) => a !== b))
@@ -111,7 +117,7 @@
 							.attr("dx", -5)
 							.attr('font-size', '35%')
 							.text((d) => d.properties.name);
-					
+
 						function clicked(d) {
 							var x, y, k;
 
