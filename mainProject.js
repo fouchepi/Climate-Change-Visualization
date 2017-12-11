@@ -40,14 +40,14 @@ var svg = d3.select("#divMap")
 .attr("height", height)
 .append("g");
 
-d3.csv("country_temp_season.csv", function(data) {
+d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visualization/master/country_temp_season.csv", function(data) {
 	let data_filt = data.filter(d => (d.year == current_year) && (d.season == current_season));
 	let data_season = data.filter(d => d.season == current_season);
 	let data_value = data_season.map(dic => parseFloat(dic.AverageTemperature));
 	//let color = colorDomain(data_value, dict_color[current_season][0], dict_color[current_season][1]);
 	let color = colorDomain(data_value, lowColor, highColor);
 
-	d3.json("countries_custom.geo.json", function(json) {
+	d3.json("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visualization/master/countries.geo.json", function(json) {
 		
 		svg
 		.attr("class", "countries")
