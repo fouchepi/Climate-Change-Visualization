@@ -13,19 +13,21 @@
 		<div id="mapContainer"></div>
 
 		<div id="container1">
+			<p>Select a season:</p>
 			<form id="season_form">
 					<input type="radio" name="season" value="spring" checked> Spring
 					<input type="radio" name="season" value="summer"> Summer
 					<input type="radio" name="season" value="fall"> Fall
 					<input type="radio" name="season" value="winter"> Winter
 			</form>
+
+			<label for="year" class="year">Year:</label>
+    		<input class="year" type="text">
+    		<button type="button" id="play">Play</button>
 		</div>
 
 		<div id="container2">
-			<div id="command">
-				<input type="range" min="1800" max="2012" class="slider" id="myRange">
-				<button type="button" id="play">Play</button>
-			</div>
+			<input type="range" min="1800" max="2012" class="slider" id="myRange">
 		</div>
 
 		<div id="graph"></div>
