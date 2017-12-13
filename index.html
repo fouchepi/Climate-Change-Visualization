@@ -1,35 +1,36 @@
 <!DOCTYPE html>
 
 <html>
-<head>
-	<title>Climate Change</title>
-	<script src="https://d3js.org/d3.v4.min.js"></script>
-	<!-- <script src="//d3js.org/topojson.v1.min.js"></script> -->
-	<!-- <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'></script> -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	<script src="https://d3js.org/d3-geo-projection.v1.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
+	<head>
+		<title>Climate Change</title>
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://d3js.org/d3-geo-projection.v1.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+	</head>
 
-<body onload="sizeChange()">
+	<body onload="sizeChange()">
+		<div id="mapContainer"></div>
 
-	<div id="mapContainer">
-		<h2 id="h2_year"></h2>
-		<div id="divMap"></div>
-		<div id="command">
-			<input type="range" min="1800" max="2012" class="slider" id="myRange">
-			<button type="button" id="play">Play</button>
+		<div id="container1">
 			<form id="season_form">
-				<input type="radio" name="season" value="spring" checked> Spring
-				<input type="radio" name="season" value="summer"> Summer
-				<input type="radio" name="season" value="fall"> Fall
-				<input type="radio" name="season" value="winter"> Winter
-			</form> 
+					<input type="radio" name="season" value="spring" checked> Spring
+					<input type="radio" name="season" value="summer"> Summer
+					<input type="radio" name="season" value="fall"> Fall
+					<input type="radio" name="season" value="winter"> Winter
+			</form>
 		</div>
-	</div>
 
-	<div id="graph"></div>
-	<script type="text/javascript" src='functionProject.js'></script>
-	<script type="text/javascript" src='mainProject.js'></script>
-</body>
-</html>
+		<div id="container2">
+			<div id="command">
+				<input type="range" min="1800" max="2012" class="slider" id="myRange">
+				<button type="button" id="play">Play</button>
+			</div>
+		</div>
+
+		<div id="graph"></div>
+
+		<script type="text/javascript" src='functionProject.js'></script>
+		<script type="text/javascript" src='mainProject.js'></script>
+	</body>
+</html>	

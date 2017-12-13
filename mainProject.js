@@ -9,8 +9,8 @@ var highColor = '#f26a52'
 
 var dict_color = {"spring":["#fff87f","#59b200"], "summer":["#ffc700","#a80000"], "fall":["#9ff2a1","#00b238"], "winter":["#7fc3ff","#0037ff"]};
 
-var width = $("#divMap").width();
-var height = $("#divMap").height();
+var width = $("#mapContainer").width();
+var height = $("#mapContainer").height();
 
 var moving = false;
 var myTimer;
@@ -25,20 +25,21 @@ d3.select("#h2_year").text(current_year + " - " + current_season);
 
 //Define map projection
 var projection = d3.geoMercator()
-.center([15,50])
-.scale(130);
+.center([13,40])
+.scale(135);
 
 //Define path generator
 var path = d3.geoPath()
 .projection(projection);
 
 //Create SVG element
-var svg = d3.select("#divMap")
-.append("svg")
-.attr("id", "map")
-.attr("width", width)
-.attr("height", height)
-.append("g");
+var svg = d3.select("#mapContainer")
+	.append("svg")
+	.attr("id", "map")
+	.attr("class", "rect")
+	.attr("width", width)
+	.attr("height", height)
+	.append("g");
 
 d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visualization/master/country_temp_season.csv", function(data) {
 	let data_filt = data.filter(d => (d.year == current_year) && (d.season == current_season));

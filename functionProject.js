@@ -1,6 +1,6 @@
 function sizeChange() {
 	d3.select("g").attr("transform", "scale(" + $("#mapContainer").width()/900 + ")");
-	$("svg").height($("#divMap").width()*0.618);
+	$("svg").height($("#mapContainer").width());
 }
 
 function fillMap(svg, color, data) {
@@ -11,11 +11,9 @@ function fillMap(svg, color, data) {
 }
 
 function colorDomain(data, lowColor, highColor) {
-	
 	var minVal = d3.min(data);
 	var maxVal = d3.max(data);
 	var color = d3.scaleLinear().domain([minVal,maxVal]).range([lowColor, highColor]);
-
 	return color
 }
 
@@ -24,10 +22,9 @@ function updateMap(color, dt, current_year, current_season) {
 	let data = dt.filter(d => (d.year == current_year) && (d.season == current_season));
 
 	d3.selectAll("svg#map path").transition()
-	//.delay(100)
 	.call(fillMap, color, data);
 
-	d3.select("#h2_year").text(current_year + " - " + current_season);	
+	d3.select("#h2_year").text(current_year + " - " + current_season);
 }
 
 function temp_mouseover(d, data, current_year, current_season) {
