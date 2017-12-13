@@ -54,7 +54,7 @@ function temp_mouseout(d) {
 	.x(function(d) { return x(d.date); })
 	.y(function(d) { return y(d.close); });
 
-	d3.csv("global_temp_season2.csv", function(d) {
+	d3.csv("global_temp_season.csv", function(d) {
 		d.date = parseTime(d.year);
 		d.close = +d.LandAverageTemperature;
 		return d;
