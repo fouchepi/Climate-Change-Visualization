@@ -3,7 +3,6 @@
 <!-- 
 - Graph
 - Color
-- Responsive design
 - Ticks sliders (date)
 - Search year
 - Zoom
@@ -16,30 +15,56 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script src="https://d3js.org/d3-geo-projection.v1.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 	</head>
 
 	<body onload="sizeChange()">
+		<div id="control-container">
+			<div id="season-container">
+				<div id="season-container-txt">
+					<span>Select a season:</span>
+				</div>
+				<div id="formulaire">
+					<form id="season_form">
+						<input class="radio-input" type="radio" name="season" value="spring" checked/> 
+						<label class="radio-label">Spring</label>
+						<input class="radio-input" type="radio" name="season" value="summer"/>
+						<label class="radio-label">Summer</label>
+						<input class="radio-input" type="radio" name="season" value="fall"/>
+						<label class="radio-label">Fall</label>
+						<input class="radio-input" type="radio" name="season" value="winter"/>
+						<label class="radio-label">Winter</label>
+					</form>
+				</div>
+			</div>
+
+			<div id="slider-container">
+				<div id="year-container">
+					<div id="start-from">Start from: </div>
+					<span>
+    					<input class="txt-input" type="text" name="year">
+    					<button class="slider-button" type="button" id="play">Play</button>
+    				</span>
+				</div>
+				
+				<div id="slider-box">
+    				<input type="range" min="1800" max="2012" class="slider" id="myRange">
+				</div>
+			</div>
+		</div>
+
+		<div id="sidebar">
+			<div id="chart1">
+				<h5>Worldwide Evolution</h5>
+				<div id="plot1"></div>
+			</div> 
+			<div id="chart2">
+				<h5>Country Evolution</h5>
+				<div id="plot2"></div>
+			</div>
+		</div>
+
 		<div id="mapContainer"></div>
-
-		<div id="container1">
-			<p>Select a season:</p>
-			<form id="season_form">
-					<input type="radio" name="season" value="spring" checked> Spring
-					<input type="radio" name="season" value="summer"> Summer
-					<input type="radio" name="season" value="fall"> Fall
-					<input type="radio" name="season" value="winter"> Winter
-			</form>
-
-			<label for="year" class="year">Year:</label>
-    		<input class="year" type="text">
-    		<button type="button" id="play">Play</button>
-		</div>
-
-		<div id="container2">
-			<input type="range" min="1800" max="2012" class="slider" id="myRange">
-		</div>
-
-		<div id="graph"></div>
 
 		<script type="text/javascript" src='functionProject.js'></script>
 		<script type="text/javascript" src='mainProject.js'></script>

@@ -25,7 +25,7 @@ d3.select("#h2_year").text(current_year + " - " + current_season);
 
 //Define map projection
 var projection = d3.geoMercator()
-.center([13,40])
+.center([13,78])
 .scale(135);
 
 //Define path generator
