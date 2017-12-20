@@ -15,6 +15,11 @@ var height = $("#mapContainer").height();
 var moving = false;
 var myTimer;
 
+var div = d3.select("#mapContainer")
+			.append("div")	
+		    .attr("class", "tooltip")				
+		    .style("opacity", 0);
+
 d3.select("#myRange")
 .property("value", current_year);
 
@@ -59,9 +64,25 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 		.attr("d", path)
 		.attr("id", function(d) { return d.id; })
 		.call(fillMap, color, data_filt)
-		/*.on('mouseover', temp_mouseover(data, current_year, current_season))
-  		.on('mouseout', temp_mouseout);*/
-
+		.on('mouseover', function(d) {
+			let dt = data.filter(d => (d.year == current_year) && (d.season == current_season));
+			let dt_temp = dt.find(x => x.country_id == d.id);
+			let temp = '';
+			if (typeof dt_temp != 'undefined' && dt_temp.AverageTemperature != '') { 
+				temp = "<br>" + dt_temp.AverageTemperature + " &degC";
+			}
+	    	div.transition()		
+			.duration(200)		
+			.style("opacity", .9);		
+		    div.html(d.properties.name + temp)
+			.style("left", (d3.event.pageX) + "px")		
+			.style("top", (d3.event.pageY - 28) + "px");		
+			})
+		.on("mouseout", function(d) {
+			div.transition()		
+			.duration(500)		
+			.style("opacity", 0);
+		});
 	});
 
 	d3.select("#myRange").on("input", function() {

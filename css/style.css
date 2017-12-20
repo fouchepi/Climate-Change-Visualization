@@ -180,3 +180,15 @@ svg {
 	stroke:#000;
 	stroke-width: 0.15;
 }
+
+div.tooltip {	
+	color: white;
+    position: absolute;			
+    text-align: center;	
+    padding: 10px;				
+    font: 12px sans-serif;		
+    background: rgba(0, 0, 0, 0.8);	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;			
+}
