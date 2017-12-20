@@ -11,6 +11,7 @@ var dict_color = {"spring":["#fff87f","#59b200"], "summer":["#ffc700","#a80000"]
 
 var width = $("#mapContainer").width();
 var height = $("#mapContainer").height();
+var centered;
 
 var moving = false;
 var myTimer;
@@ -30,7 +31,7 @@ d3.select("#h2_year").text(current_year + " - " + current_season);
 
 //Define map projection
 var projection = d3.geoMercator()
-.center([13,78])
+.center([10,78])
 .scale(135);
 
 //Define path generator
@@ -41,10 +42,16 @@ var path = d3.geoPath()
 var svg = d3.select("#mapContainer")
 	.append("svg")
 	.attr("id", "map")
-	.attr("class", "rect")
 	.attr("width", width)
-	.attr("height", height)
-	.append("g");
+	.attr("height", height);
+
+svg.append("rect")
+    .attr("class", "background")
+    .attr("width", width)
+    .attr("height", height)
+    .on("click", zoom);
+
+var g = svg.append("g");
 
 d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visualization/master/data/country_temp_season.csv", function(data) {
 	let data_filt = data.filter(d => (d.year == current_year) && (d.season == current_season));
@@ -55,7 +62,7 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 
 	d3.json("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visualization/master/data/countries_custom.geo.json", function(json) {
 		
-		svg
+		g.append('g')
 		.attr("class", "countries")
 		.selectAll("path")
 		.data(json.features)
@@ -64,6 +71,7 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 		.attr("d", path)
 		.attr("id", function(d) { return d.id; })
 		.call(fillMap, color, data_filt)
+		.on("click", zoom)
 		.on('mouseover', function(d) {
 			let dt = data.filter(d => (d.year == current_year) && (d.season == current_season));
 			let dt_temp = dt.find(x => x.country_id == d.id);
@@ -118,6 +126,30 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 	  		button.text("Pause");
 	  	}
   	});
-  });
+});
 
-//graph()
+function zoom(d) {
+	var x, y, k;
+	if (d && centered !== d) {
+		var centroid = path.centroid(d);
+		x = centroid[0];
+		y = centroid[1];
+		k = 4;
+		centered = d;
+	} else {
+		x = width / 2;
+		y = height / 2;
+		k = 1;
+		centered = null;
+	}
+
+	g.selectAll("path")
+		.classed("active", centered && function(d) { return d === centered; });
+
+	g.transition()
+		.duration(750)
+		.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+		.style("stroke-width", 1.5 / k + "px");
+
+	//Call graph_country()
+}
