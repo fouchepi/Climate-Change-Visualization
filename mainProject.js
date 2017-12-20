@@ -1,6 +1,6 @@
 d3.select(window).on("resize", sizeChange);
 
-var current_year = 1800;
+var current_year = 1850;
 var current_season = "spring"
 var text_year = "Average Temperature in ";
 

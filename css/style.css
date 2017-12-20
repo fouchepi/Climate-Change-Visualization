@@ -61,11 +61,11 @@ html, body {
 .radio-label {
 	display: inline-block;
     vertical-align: middle;
-    margin-right: 2.5%;
+    margin-right: 1.5%;
 }
 
 .radio-input {
-	margin-left: 2.5%;
+	margin-left:0%;
 	display: inline-block;
     vertical-align: middle;
 }
@@ -83,15 +83,9 @@ html, body {
 	float: left;
 }
 
-#start-from {
-	color: white;
-	display: table-cell;
-	vertical-align: middle;
-	text-decoration: underline;
-	width: 25%;
-}
-
 #year-container span {
+	text-align: right;
+	padding-right: 10%;
 	color: white;
 	display: table-cell;
 	vertical-align: middle;	
@@ -108,10 +102,6 @@ html, body {
 
 #play {
 	margin-left: 5%;
-}
-
-.slider-button {
-
 }
 
 #slider-box {

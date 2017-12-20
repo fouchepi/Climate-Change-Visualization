@@ -3,7 +3,6 @@
 <!-- 
 - Graph
 - Color
-- Ticks sliders (date)
 - Search year
 -->
 
@@ -39,9 +38,12 @@
 
 			<div id="slider-container">
 				<div id="year-container">
-					<div id="start-from">Start from: </div>
 					<span>
-    					<input class="txt-input" type="text" name="year">
+						<div style="float: left; text-decoration: underline;">Display method:</div>
+						<select name="selection">
+							<option value="temperature">Temperature</option>
+							<option value="difference">Difference</option>
+						</select>
     					<button class="slider-button" type="button" id="play">Play</button>
     				</span>
 				</div>
