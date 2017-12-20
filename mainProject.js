@@ -22,7 +22,7 @@ var div = d3.select("#mapContainer")
 		    .style("opacity", 0);
 
 d3.select("#myRange")
-.property("value", current_year);
+	.property("value", current_year);
 
 /*d3.selectAll("input[name='season']")
 .property("checked", (d,i) => i === 0);*/
@@ -52,6 +52,11 @@ svg.append("rect")
     .on("click", zoom);
 
 var g = svg.append("g");
+
+//Update value for slider
+function outputUpdate(num) {
+	document.querySelector('#output').value = num;
+}
 
 d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visualization/master/data/country_temp_season.csv", function(data) {
 	let data_filt = data.filter(d => (d.year == current_year) && (d.season == current_season));
@@ -113,7 +118,7 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
   			clearInterval (myTimer);
 	  		myTimer = setInterval (function() {
 	  			moving = true;
-	  			var b= d3.select("#myRange");
+	  			var b = d3.select("#myRange");
 	  			var t = (+b.property("value") + 1) % (+b.property("max") + 1);
 	  			//if (t == +b.property("max")) { clearInterval(myTimer); }
 	  			if (t == 0) { t = +b.property("min"); }
@@ -121,6 +126,7 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 
 				current_year = b.property("value");
 				updateMap(color, data, current_year, current_season);
+				outputUpdate(current_year);
 
 	  		}, 100);
 	  		button.text("Pause");

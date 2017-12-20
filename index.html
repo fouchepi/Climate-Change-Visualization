@@ -5,7 +5,6 @@
 - Color
 - Ticks sliders (date)
 - Search year
-- Zoom
 -->
 
 <html>
@@ -48,7 +47,11 @@
 				</div>
 				
 				<div id="slider-box">
-    				<input type="range" min="1800" max="2012" class="slider" id="myRange">
+					<div id="span1850">1850</div>
+					<div id="span2012">2012</div>
+    				<input type="range" min="1850" max="2012" class="slider" id="myRange" oninput="outputUpdate(value)">
+    				<div id="year">Year: </div>
+    				<output for=myRange id="output"></output>
 				</div>
 			</div>
 		</div>

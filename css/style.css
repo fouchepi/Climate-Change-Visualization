@@ -132,7 +132,39 @@ html, body {
 	opacity: 0.7;
 	-webkit-transition: .2s;
 	transition: opacity .2s;
-	margin-top: 7%;
+	margin-top: 2.5%;
+}
+
+output {
+	padding-left: 5px;
+	color: white;
+  	display: block;
+  	margin-top: 0px auto;
+  	font-size:0.85em;
+}
+
+#span1850 {
+	text-align: left;
+	float: left;
+	width: 50%;
+	font-size: .75em;
+	color: white;
+	padding-top: 1%;
+}
+
+#span2012 {
+	padding-top: 1%;
+	text-align: right;
+	width: 50%;
+	margin-left: 50%;
+	font-size: .75em;
+	color: white;
+}
+
+#year {
+	font-size: 0.85em;
+	color: white;
+	float: left;
 }
 
 #sidebar {
