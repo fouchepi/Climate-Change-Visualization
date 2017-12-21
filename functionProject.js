@@ -346,7 +346,7 @@ function country_graph(country_svg, country, current_season, current_year) {
 	  	country_svg.append("g")			
 	      	.attr("class", "grid")
 	      	.attr("transform", "translate(" + margin.left + ",0)")
-	      	.call(d3.axisLeft(y).ticks(5).tickSize(-width_country).tickFormat(""));
+	      	.call(d3.axisLeft(y).ticks(10).tickSize(-width_country).tickFormat(""));
 
 	// 	// Curve Name
 	// 	var season = graph_svg.selectAll(".paths")
