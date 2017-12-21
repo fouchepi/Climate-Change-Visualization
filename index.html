@@ -51,8 +51,8 @@
 				<div id="slider-box">
 					<div id="span1850">1850</div>
 					<div id="span2012">2012</div>
-    				<input type="range" min="1850" max="2012" class="slider" id="myRange" oninput="outputUpdate(value)">
-    				<div id="year">Year: </div>
+    				<input type="range" min="1850" max="2012" class="slider" id="myRange">
+    				<div id="year"></div>
     				<output for=myRange id="output"></output>
 				</div>
 			</div>
@@ -60,16 +60,17 @@
 
 		<div id="sidebar">
 			<div id="chart1">
-				<h5>Worldwide Evolution</h5>
+				<h5 style="margin:0; text-decoration: underline;">Worldwide Evolution</h5>
 				<div id="plot1"></div>
 			</div> 
 			<div id="chart2">
-				<h5>Country Evolution</h5>
+				<h5 style="margin:0; text-decoration: underline;">Country Evolution</h5>
 				<div id="plot2"></div>
 			</div>
 		</div>
 
 		<div id="mapContainer"></div>
+		<div id="legend"></div>
 
 		<script type="text/javascript" src='functionProject.js'></script>
 		<script type="text/javascript" src='mainProject.js'></script>
