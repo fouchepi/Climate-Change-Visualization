@@ -27,8 +27,6 @@ d3.select("#myRange")
 /*d3.selectAll("input[name='season']")
 .property("checked", (d,i) => i === 0);*/
 
-d3.select("#h2_year").text(current_year + " - " + current_season);
-
 //Define map projection
 var projection = d3.geoMercator()
 .center([25,78])
@@ -38,7 +36,9 @@ var projection = d3.geoMercator()
 var path = d3.geoPath()
 .projection(projection);
 
-//Create SVG element
+
+
+// ------------ Map -------------
 var svg = d3.select("#mapContainer")
 	.append("svg")
 	.attr("id", "map")
@@ -54,24 +54,31 @@ svg.append("rect")
 var g = svg.append("g");
 
 
+
+// ------------ Plot 1 -------------
 var plot1Div = document.getElementById("plot1");
 var ww_svg = d3.select(plot1Div).append('svg').attr('id', 'svg_plot1'),
 	margin = {top: 15, right: 15, bottom: 15, left: 35},
 	width_ww = plot1Div.clientWidth - margin.left - margin.right,
     height_ww = plot1Div.clientHeight - margin.top - margin.bottom;
 
-// var ww_svg = d3.select("#plot1")
-// 	.append("svg")
-// 	.attr("id", "ww_graph")
-// 	.attr("width", width_ww)
-// 	.attr("height", height_ww)
-// 	.append("g");
-
 var g2 = ww_svg.append("g")
 	.attr("id", "ww_graph")
-	// .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 graph(g2, current_season, current_year);
+
+
+
+// ------------ Plot 2 -------------
+var plot2Div = document.getElementById("plot2");
+var country_svg = d3.select(plot2Div).append('svg').attr('id', 'svg_plot2'),
+	width_country = plot2Div.clientWidth - margin.left - margin.right,
+    height_country = plot2Div.clientHeight - margin.top - margin.bottom;
+
+var g3 = country_svg.append("g")
+	.attr("id", "country_graph")
+
+
 
 d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visualization/master/data/country_temp_season.csv", function(data) {
 	let data_filt = data.filter(d => (d.year == current_year) && (d.season == current_season));
@@ -79,6 +86,7 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 	let data_value = data.map(dic => parseFloat(dic.AverageTemperature));
 	//let color = colorDomain(data_value, dict_color[current_season][0], dict_color[current_season][1]);
 	let color = colorDomain(data_value, lowColor, highColor);
+	let zoomed = true;
 
 	d3.json("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visualization/master/data/countries_custom.geo.json", function(json) {
 		
@@ -144,7 +152,7 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 
 				current_year = b.property("value");
 				updateMap(color, data, current_year, current_season);
-				//graph(ww_svg, current_season, current_year)
+				// graph(g2, current_season, current_year)
 
 	  		}, 100);
 	  		button.text("Pause");
