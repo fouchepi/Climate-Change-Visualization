@@ -53,6 +53,14 @@ svg.append("rect")
 
 var g = svg.append("g");
 
+var ww_svg = d3.select("#plot1")
+	.append("svg")
+	.attr("id", "ww_graph")
+	.attr("width", "100%")
+	.attr("height", "100%");
+
+graph(ww_svg, current_season, current_year);
+
 //Update value for slider
 function outputUpdate(num) {
 	document.querySelector('#output').value = num;
@@ -101,11 +109,13 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 	d3.select("#myRange").on("input", function() {
 		current_year = this.value;
 		updateMap(color, data, current_year, current_season);
+		graph(ww_svg, current_season, current_year)
 	});
 
 	d3.selectAll("input[name='season']").on("change", function() {
 		current_season = this.value;
 		updateMap(color, data, current_year, current_season);
+		//graph(ww_svg, current_season, current_year)
 	});
 
   	d3.select("#play").on("click", function() {
@@ -127,6 +137,7 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 				current_year = b.property("value");
 				updateMap(color, data, current_year, current_season);
 				outputUpdate(current_year);
+				//graph(ww_svg, current_season, current_year)
 
 	  		}, 100);
 	  		button.text("Pause");

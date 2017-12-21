@@ -27,67 +27,118 @@ function updateMap(color, dt, current_year, current_season) {
 	d3.select("#h2_year").text(current_year + " - " + current_season);
 }
 
-function temp_mouseover(d, data, current_year, current_season) {
-	d3.select("#h2_year").text(current_year + " - " + d.properties);
-}
+function graph(graph_svg, current_season, current_year) {
+	// Set the dimensions of the canvas / graph
 
-function temp_mouseout(d) {
-	d3.select("#h2_year").text(current_year + " - " + current_season);
-}
+	//d3.selectAll("svg > *").remove();
+	graph_svg.text('');
 
-/*function graph() {
-	var graph_svg = d3.select("#graph").append("svg").attr("width", "960").attr("height", "500"),
-	margin = {top: 20, right: 20, bottom: 30, left: 50},
-	width = +graph_svg.attr("width") - margin.left - margin.right,
-	height = +graph_svg.attr("height") - margin.top - margin.bottom,
-	g = graph_svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	console.log(graph_svg.style("width"))
+	console.log(graph_svg.style("height"))
+	console.log(current_season);
+	console.log(current_year);
 
-	var parseTime = d3.timeParse("%Y");
+	var margin = {top: 15, right: 15, bottom: 15, left: 20};
+	var width =  parseFloat(graph_svg.style("width")) - margin.left - margin.right;
+	var height = parseFloat(graph_svg.style("height")) + margin.top + margin.bottom;
 
-	var x = d3.scaleTime()
-	.rangeRound([0, width]);
+	// Parse the date / time
+	var parseDate = d3.timeParse("%Y");
 
-	var y = d3.scaleLinear()
-	.rangeRound([height, 0]);
+	// Set the ranges
+	var x = d3.scaleTime().range([0, width]);  
+	var y = d3.scaleLinear().range([height, 0]);
 
-	var line = d3.line()
-	.x(function(d) { return x(d.date); })
-	.y(function(d) { return y(d.close); });
+	// Define the line
+	var templine = d3.line()    
+	    .x(function(d) { return x(d.year); })
+	    .y(function(d) { return y(d.LandAverageTemperature); });
 
-	d3.csv("global_temp_season.csv", function(d) {
-		d.date = parseTime(d.year);
-		d.close = +d.LandAverageTemperature;
-		return d;
-	}, function(error, data) {
-		if (error) throw error;
-		data = data.filter(d => d.season == "winter")
-		console.log(data)
-		x.domain(d3.extent(data, function(d) { return d.date; }));
-		y.domain(d3.extent(data, function(d) { return d.close; }));
+	// Get the data
+	d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visualization/master/data/global_temp_season.csv", function(error, data) {
+	    
+	    data = data.filter(d => (d.year >= 1850));
 
-		g.append("g")
-		.attr("transform", "translate(0," + height + ")")
-		.call(d3.axisBottom(x))
-		.select(".domain")
-		.remove();
+	    data.forEach(function(d) {
+	        d.year = parseDate(d.year);
+	        d.LandAverageTemperature = +d.LandAverageTemperature;
+	    });
 
-		g.append("g")
-		.call(d3.axisLeft(y))
-		.append("text")
-		.attr("fill", "#000")
-		.attr("transform", "rotate(-90)")
-		.attr("y", 6)
-		.attr("dy", "0.71em")
-		.attr("text-anchor", "end")
-		.text("LandAverageTemperature(Celsius)");
+	    // Scale the range of the data
+	    x.domain(d3.extent(data, function(d) { return d.year; }));
+	    y.domain([0, d3.max(data, function(d) { return d.LandAverageTemperature; })]);
 
-		g.append("path")
-		.datum(data)
-		.attr("fill", "none")
-		.attr("stroke", "steelblue")
-		.attr("stroke-linejoin", "round")
-		.attr("stroke-linecap", "round")
-		.attr("stroke-width", 1.5)
-		.attr("d", line);
+	    // Nest the entries by symbol
+	    var dataNest = d3.nest()
+	        .key(function(d) {return d.season;})
+	        .entries(data);
+
+
+	    // Loop through each symbol / key
+	    dataNest.forEach(function(d) { 
+
+	        graph_svg
+	        	.append("path")
+	            .attr("class", "line")
+	            .attr("id", "path_graph")
+	            .style("stroke", function() {
+					switch(d.key) {
+						case "spring":
+							return d.color = "#01DF01";
+							break;
+						case "summer":
+							return d.color = "#FF0000";
+							break;
+						case "fall":
+							return d.color = "#FFBF00";
+							break;
+						case "winter":
+							return d.color = "#0000FF";
+							break;
+					}
+				})
+	            .attr("d", templine(d.values))
+	            .attr("transform", "translate(" + margin.left + "," + 0 + ")");
+
+	    });
+
+		/*var curtain = graph_svg.append('rect')
+			.attr('x', -1 * (width + margin.left))
+			.attr('y', -1 * height)
+			.attr('height', height)
+			.attr('width', width)
+			.attr('class', 'curtain')
+			.attr('transform', 'rotate(180)')
+			.style('fill', '#ffffff');*/
+
+		graph_svg.append('line')
+			.attr('stroke', '#333')
+			.attr('stroke-width', 0)
+			.attr('class', 'guide')
+			.attr('x1', 1)
+			.attr('y1', 1)
+			.attr('x2', 1)
+			.attr('y2', height)
+			.attr("transform", "translate(" + margin.left + "," + 0 + ")");
+
+	     // add the Y gridlines
+	  	graph_svg.append("g")			
+	      	.attr("class", "grid")
+	      	.attr("transform", "translate(" + margin.left + ",0)")
+	      	.call(d3.axisLeft(y).ticks(5).tickSize(-width).tickFormat(""))
+
+	    // Add the X Axis
+	    graph_svg.append("g")
+			.attr("class", "axis")
+			.attr("transform", "translate(" + margin.left + "," + height + ")")
+			.call(d3.axisBottom(x));
+
+	    // Add the Y Axis
+	    graph_svg.append("g")
+			.attr("class", "axis")
+			.attr("transform", "translate(" + margin.left + ",0)")
+			.call(d3.axisLeft(y));
+
 	});
-}*/
+
+}
