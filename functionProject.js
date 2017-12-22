@@ -220,8 +220,18 @@ function linearLegend(color) {
       .attr("stop-opacity", 1);
 
     legend.append("stop")
+      .attr("offset", "25%")
+      .attr("stop-color", d3.interpolateRdYlBu(0.25))
+      .attr("stop-opacity", 1);
+
+    legend.append("stop")
       .attr("offset", "50%")
       .attr("stop-color", d3.interpolateRdYlBu(0.5))
+      .attr("stop-opacity", 1);
+
+    legend.append("stop")
+      .attr("offset", "75%")
+      .attr("stop-color", d3.interpolateRdYlBu(0.75))
       .attr("stop-opacity", 1);
       
     legend.append("stop")
