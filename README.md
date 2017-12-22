@@ -1,12 +1,12 @@
 # Climate-Change-Visualization
 
 This project is part of the Digital Visualization course taught at EPFL by Dr. Kirell.  
+The aim is to give an interactive worlwide view of countries' temperatures during the last century.  
 Implemented by 
 - Pierre Fouche 
 - Matthias Leroy
 - Alexandre Poussard.
 
-The aim is to give an interactive worlwide view of countries' temperatures during the last century.
 
 The process book (pdf) is in the repository 
 
