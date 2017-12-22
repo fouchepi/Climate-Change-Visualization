@@ -244,7 +244,7 @@ function country_graph(country_svg, country, current_season, current_year) {
 	    });
 
 	    x.domain(d3.extent(data, function(d) { return d.year; }));
-	    y.domain(d3.extent(data, function(d) { return d.AverageTemperature+1; }));
+	    y.domain([d3.min(data, function(d) { return d.AverageTemperature+1; }) - 2, d3.max(data, function(d) { return d.AverageTemperature+1; })]);
 
 	    var dataNest = d3.nest()
 	        .key(function(d) {return d.season;})
