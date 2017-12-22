@@ -1,6 +1,6 @@
 # Climate-Change-Visualization
 
-This project is part of the Digital Visualization course taught at EPFL by Dr. Kirell.  
+This project is part of the [COM-480] - Digital Visualization course taught at EPFL by Dr. Kirell.  
 The aim is to give an interactive worlwide view of countries' temperatures during the last century.  
 Implemented by 
 - Pierre Fouche 
