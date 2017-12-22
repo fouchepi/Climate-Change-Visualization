@@ -15,6 +15,7 @@ var centered;
 
 var diffmode = false;
 var moving = false;
+var zoomOn = null;
 var myTimer;
 
 var div = d3.select("#mapContainer")
@@ -145,6 +146,7 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 		current_season = this.value;
 		updateMap(color, color_diff, diffmode, data, current_year, current_season);
 		graph(g2, current_season, current_year);
+		if (zoomOn) { country_graph(g3, zoomOn.id, current_season, current_year); }
 	});
 
   	d3.select("#play").on("click", function() {

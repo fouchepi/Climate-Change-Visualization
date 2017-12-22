@@ -43,6 +43,7 @@ function zoom(d) {
 	var x, y, k;
 	var title = d3.select("#textcplot");
 	if (d && centered !== d) {
+		zoomOn = d;
 		var centroid = path.centroid(d);
 		x = centroid[0];
 		y = centroid[1];
@@ -51,6 +52,7 @@ function zoom(d) {
 		title.text(d.properties.name + " Evolution")
 		country_graph(g3, d.id, current_season, current_year);
 	} else {
+		zoomOn = null;
 		x = width / 2;
 		y = height / 2;
 		k = 1;
