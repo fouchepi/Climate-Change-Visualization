@@ -1,8 +1,11 @@
+// Make the map a bit responsive
 function sizeChange() {
 	d3.select("g").attr("transform", "scale(" + $("#mapContainer").width()/900 + ")");
 	$("svg").height($("#mapContainer").width());
 }
 
+
+// Fill the map with colors depending on various parameters
 function fillMap(svg, color, color_diff, diffmode, data) {
 	var year_to_show;
 	if (diffmode) { year_to_show = (current_year - 4) + " - " + current_year} else { year_to_show = current_year }
@@ -19,6 +22,8 @@ function fillMap(svg, color, color_diff, diffmode, data) {
 	});
 }
 
+
+// Define the color domain
 function colorDomain(data, diffmode, lowColor, highColor) {
 	var minVal = d3.min(data);
 	var maxVal = d3.max(data);
@@ -26,11 +31,12 @@ function colorDomain(data, diffmode, lowColor, highColor) {
 		minVal = -2;
 		maxVal = 2;
 	}
-	//var color = d3.scaleLinear().domain([minVal,maxVal]).range([lowColor, highColor]);
 	var color = d3.scaleSequential(d3.interpolateRdYlBu).domain([maxVal,minVal]);
 	return color;
 }
 
+
+// Update the map 
 function updateMap(color, color_diff, diffmode, dt, current_year, current_season) {
 	let duration;
 	if(diffmode) {duration = 600} else {duration = 150}
@@ -39,6 +45,8 @@ function updateMap(color, color_diff, diffmode, dt, current_year, current_season
 	.call(fillMap, color, color_diff, diffmode, data);
 }
 
+
+// Zoom function, used when the user click on a country
 function zoom(d) {
 	var x, y, k;
 	var title = d3.select("#textcplot");
@@ -70,9 +78,10 @@ function zoom(d) {
 		.style("stroke-width", 1.5 / k + "px");
 }
 
+
+// Load and plot the worlwide evolution of temperatures for each season
 function graph(graph_svg, current_season, current_year) {
 	graph_svg.text('');
-
 	var parseDate = d3.timeParse("%Y");
 	var x = d3.scaleTime().range([0, width_ww]);  
 	var y = d3.scaleLinear().range([height_ww, 0]);
@@ -95,14 +104,13 @@ function graph(graph_svg, current_season, current_year) {
 	        .key(function(d) {return d.season;})
 	        .entries(data);
 
-
-	    // Draw the grid
+	    // Draw the background grid
 	  	graph_svg.append("g")			
 	      	.attr("class", "grid")
 	      	.attr("transform", "translate(" + margin.left + ",0)")
 	      	.call(d3.axisLeft(y).ticks(5).tickSize(-width_ww).tickFormat(""));
 
-	  	// Draw the 4 lines
+	  	// Draw the 4 lines for each season
 	    dataNest.forEach(function(d) { 
   			graph_svg.append("path")
       			.datum(data)
@@ -155,108 +163,68 @@ function graph(graph_svg, current_season, current_year) {
 		   	.attr("text-anchor", "end")
 		   	.attr("transform", "translate(" + margin.left + "," + 0 + ")")
 		   	.text("(C)");
-		
-		
-
-		// Curve Name
-		// var season = graph_svg.selectAll(".paths")
-  //     		.data(d)
-  //   		.enter().append("g")
-  //     		.attr("class", "city");
-
-  // 		season.append("path")
-  //     		.attr("class", "line")
-  //     		.attr("d", function(d) { return line(d.values); })
-  //     		.attr("data-legend",function(d) { return d.name})
-  //     		.style("stroke", function(d) { return color(d.name); });
-
-  // 		season.append("text")
-  //     		.datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
-  //     		.attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.temperature) + ")"; })
-  //     		.attr("x", 3)
-  //     		.attr("dy", ".35em")
-  //     		.text(function(d) { return d.name; });
-		
-
-		/*var curtain = graph_svg.append('rect')
-			.attr('x', -1 * (width + margin.left))
-			.attr('y', -1 * height)
-			.attr('height', height)
-			.attr('width', width)
-			.attr('class', 'curtain')
-			.attr('transform', 'rotate(180)')
-			.style('fill', '#ffffff');*/
-
-		// graph_svg.append('line')
-		// 	.attr('stroke', '#333')
-		// 	.attr('stroke-width', 0)
-		// 	.attr('class', 'guide')
-		// 	.attr('x1', 1)
-		// 	.attr('y1', 1)
-		// 	.attr('x2', 1)
-		// 	.attr('y2', height)
-		// 	.attr("transform", "translate(" + margin.left + "," + 0 + ")");
 	});
 }
 
+
+// Generates the color legend for the map
 function linearLegend(color) {
-  	// add a legend
     var w = 120, h = 200;
-
     var key = d3.select("#leg").text('');
-
     var legend = key.append("defs")
-      .append("svg:linearGradient")
-      .attr("id", "gradient")
-      .attr("x1", "100%")
-      .attr("y1", "0%")
-      .attr("x2", "100%")
-      .attr("y2", "100%")
-      .attr("spreadMethod", "pad");
+      	.append("svg:linearGradient")
+      	.attr("id", "gradient")
+      	.attr("x1", "100%")
+      	.attr("y1", "0%")
+      	.attr("x2", "100%")
+      	.attr("y2", "100%")
+      	.attr("spreadMethod", "pad");
 
     legend.append("stop")
-      .attr("offset", "0%")
-      .attr("stop-color", d3.interpolateRdYlBu(0))
-      .attr("stop-opacity", 1);
+      	.attr("offset", "0%")
+      	.attr("stop-color", d3.interpolateRdYlBu(0))
+      	.attr("stop-opacity", 1);
 
     legend.append("stop")
-      .attr("offset", "25%")
-      .attr("stop-color", d3.interpolateRdYlBu(0.25))
-      .attr("stop-opacity", 1);
+      	.attr("offset", "25%")
+      	.attr("stop-color", d3.interpolateRdYlBu(0.25))
+      	.attr("stop-opacity", 1);
 
     legend.append("stop")
-      .attr("offset", "50%")
-      .attr("stop-color", d3.interpolateRdYlBu(0.5))
-      .attr("stop-opacity", 1);
+      	.attr("offset", "50%")
+      	.attr("stop-color", d3.interpolateRdYlBu(0.5))
+      	.attr("stop-opacity", 1);
 
     legend.append("stop")
-      .attr("offset", "75%")
-      .attr("stop-color", d3.interpolateRdYlBu(0.75))
-      .attr("stop-opacity", 1);
+      	.attr("offset", "75%")
+      	.attr("stop-color", d3.interpolateRdYlBu(0.75))
+      	.attr("stop-opacity", 1);
       
     legend.append("stop")
-      .attr("offset", "100%")
-      .attr("stop-color", d3.interpolateRdYlBu(1))
-      .attr("stop-opacity", 1);
+      	.attr("offset", "100%")
+      	.attr("stop-color", d3.interpolateRdYlBu(1))
+      	.attr("stop-opacity", 1);
 
     key.append("rect")
-      .attr("width", w - 100)
-      .attr("height", h)
-      .style("fill", "url(#gradient)")
-      .attr("transform", "translate(0,10)");
+      	.attr("width", w - 100)
+      	.attr("height", h)
+      	.style("fill", "url(#gradient)")
+      	.attr("transform", "translate(0,10)");
 
     var y = d3.scaleLinear()
-      .range([h, 0])
-      .domain([color.domain()[1], color.domain()[0]]);
+      	.range([h, 0])
+      	.domain([color.domain()[1], color.domain()[0]]);
 
     var yAxis = d3.axisRight(y).tickFormat(d => d + " C");
 
     key.append("g")
-      .attr("class", "yaxis")
-      .attr("transform", "translate(21,10)")
-      .call(yAxis);
+      	.attr("class", "yaxis")
+      	.attr("transform", "translate(21,10)")
+      	.call(yAxis);
 }
 
+
+// Load and plot the temperature evolution of a specific country when selected
 function country_graph(country_svg, country, current_season, current_year) {
 	country_svg.text('');
 	var parseDate = d3.timeParse("%Y");
@@ -282,7 +250,13 @@ function country_graph(country_svg, country, current_season, current_year) {
 	        .key(function(d) {return d.season;})
 	        .entries(data);
 
-	  	// Draw the 4 lines
+		// Draw the background grid
+	  	country_svg.append("g")			
+	      	.attr("class", "grid")
+	      	.attr("transform", "translate(" + margin.left + ",0)")
+	      	.call(d3.axisLeft(y).ticks(10).tickSize(-width_country).tickFormat(""));
+
+	  	// Draw the 4 lines for each season
 	    dataNest.forEach(function(d) { 
   			country_svg.append("path")
       			.datum(data)
@@ -335,50 +309,5 @@ function country_graph(country_svg, country, current_season, current_year) {
 		   	.attr("text-anchor", "end")
 		   	.attr("transform", "translate(" + margin.left + "," + 0 + ")")
 		   	.text("(C)");
-		
-		// Draw the grid
-	  	country_svg.append("g")			
-	      	.attr("class", "grid")
-	      	.attr("transform", "translate(" + margin.left + ",0)")
-	      	.call(d3.axisLeft(y).ticks(10).tickSize(-width_country).tickFormat(""));
-
-	// 	// Curve Name
-	// 	var season = graph_svg.selectAll(".paths")
- //      		.data(d.)
- //    		.enter().append("g")
- //      		.attr("class", "city");
-
- //  		season.append("path")
- //      		.attr("class", "line")
- //      		.attr("d", function(d) { return line(d.values); })
- //      		.attr("data-legend",function(d) { return d.name})
- //      		.style("stroke", function(d) { return color(d.name); });
-
- //  		season.append("text")
- //      		.datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
- //      		.attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.temperature) + ")"; })
- //      		.attr("x", 3)
- //      		.attr("dy", ".35em")
- //      		.text(function(d) { return d.name; });
-		
-
-		/*var curtain = graph_svg.append('rect')
-			.attr('x', -1 * (width + margin.left))
-			.attr('y', -1 * height)
-			.attr('height', height)
-			.attr('width', width)
-			.attr('class', 'curtain')
-			.attr('transform', 'rotate(180)')
-			.style('fill', '#ffffff');*/
-
-		// graph_svg.append('line')
-		// 	.attr('stroke', '#333')
-		// 	.attr('stroke-width', 0)
-		// 	.attr('class', 'guide')
-		// 	.attr('x1', 1)
-		// 	.attr('y1', 1)
-		// 	.attr('x2', 1)
-		// 	.attr('y2', height)
-		// 	.attr("transform", "translate(" + margin.left + "," + 0 + ")");
 	});
 }

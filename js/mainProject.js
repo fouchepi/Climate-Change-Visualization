@@ -1,23 +1,17 @@
 d3.select(window).on("resize", sizeChange);
-
 var current_year = 1850;
 var current_season = "spring"
 var text_year = "Average Temperature in ";
-
 var lowColor = '#a39bff'
 var highColor = '#f26a52'
-
 var dict_color = {"spring":["#fff87f","#59b200"], "summer":["#ffc700","#a80000"], "fall":["#9ff2a1","#00b238"], "winter":["#7fc3ff","#0037ff"]};
-
 var width = $("#mapContainer").width();
 var height = $("#mapContainer").height();
 var centered;
-
 var diffmode = false;
 var moving = false;
 var zoomOn = null;
 var myTimer;
-
 var div = d3.select("#mapContainer")
 			.append("div")	
 		    .attr("class", "tooltip")				
@@ -26,10 +20,12 @@ var div = d3.select("#mapContainer")
 d3.select("#myRange")
 	.property("value", current_year);
 
+
 //Define map projection
 var projection = d3.geoMercator()
 .center([25,74])
 .scale(130);
+
 
 //Define path generator
 var path = d3.geoPath()
@@ -37,7 +33,7 @@ var path = d3.geoPath()
 
 
 
-// ------------ Map -------------
+// ------------ Map SVG -------------
 var svg = d3.select("#mapContainer")
 	.append("svg")
 	.attr("id", "map")
@@ -76,7 +72,7 @@ var g3 = country_svg.append("g")
 	.attr("id", "country_graph")
 
 
-// ---------- Legend ---------------
+// ---------- Map Legend ---------------
 var svg_legend = d3.select("#legend")
 	.append("svg")
 	.attr("id", "leg")
@@ -84,9 +80,8 @@ var svg_legend = d3.select("#legend")
 	.attr("height", 200);
 
 
-// --------- get our data -------------
+// --------- Load and plot the map -------------
 d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visualization/master/data/country_temp_season.csv", function(data) {
-
 	let data_filt = data.filter(d => (d.year == current_year) && (d.season == current_season));
 	let data_season = data.filter(d => d.season == current_season);
 	let data_color_temp = data.map(dic => parseFloat(dic.AverageTemperature));
@@ -96,7 +91,6 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 	let zoomed = true;
 
 	d3.json("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visualization/master/data/countries_custom.geo.json", function(json) {
-		
 		g.append('g')
 		.attr("class", "countries")
 		.selectAll("path")
@@ -130,17 +124,20 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 		});
 	});
 
+
 	d3.select("#colorMode").on("change", function() {
 		diffvalue = this.options[this.selectedIndex].value;
 		if(diffvalue == "diff") {diffmode = true} else {diffmode = false};
 		updateMap(color, color_diff, diffmode, data, current_year, current_season);
 	});
 
+
 	d3.select("#myRange").on("input", function() {
 		current_year = this.value;
 		updateMap(color, color_diff, diffmode, data, current_year, current_season);
 		graph(g2, current_season, current_year);
 	});
+
 
 	d3.selectAll("input[name='season']").on("change", function() {
 		current_season = this.value;
@@ -149,11 +146,12 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 		if (zoomOn) { country_graph(g3, zoomOn.id, current_season, current_year); }
 	});
 
+
   	d3.select("#play").on("click", function() {
   		var transition;
   		if(diffmode) {transition = 600} else {transition = 150}
-
   		var button = d3.select(this);
+
 		if (button.text() == "Pause") {
 			moving = false;
 			clearInterval(myTimer);
@@ -165,13 +163,10 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 	  			var b = d3.select("#myRange");
 	  			var t = (+b.property("value") + 1) % (+b.property("max") + 1);
 	  			if (t == +b.property("max")) { clearInterval(myTimer); button.text("Replay");}
-	  			//if (t == 0) { t = +b.property("min"); }
 	  			b.property("value", t);
 
 				current_year = b.property("value");
 				updateMap(color, color_diff, diffmode, data, current_year, current_season);
-				// graph(g2, current_season, current_year)
-
 	  		}, transition);
 	  		button.text("Pause");
 	  	}
