@@ -55,7 +55,7 @@ var g = svg.append("g");
 // ------------ Plot 1 -------------
 var plot1Div = document.getElementById("plot1");
 var ww_svg = d3.select(plot1Div).append('svg').attr('id', 'svg_plot1'),
-	margin = {top: 25, right: 25, bottom: 25, left: 35},
+	margin = {top: 25, right: 25, bottom: 25, left: 25},
 	width_ww = plot1Div.clientWidth - margin.left - margin.right,
     height_ww = plot1Div.clientHeight - margin.top - margin.bottom;
 
