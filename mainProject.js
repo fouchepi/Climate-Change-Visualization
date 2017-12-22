@@ -138,13 +138,13 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 	d3.select("#myRange").on("input", function() {
 		current_year = this.value;
 		updateMap(color, color_diff, diffmode, data, current_year, current_season);
-		graph(g2, current_season, current_year)
+		graph(g2, current_season, current_year);
 	});
 
 	d3.selectAll("input[name='season']").on("change", function() {
 		current_season = this.value;
 		updateMap(color, color_diff, diffmode, data, current_year, current_season);
-		//graph(ww_svg, current_season, current_year)
+		graph(g2, current_season, current_year);
 	});
 
   	d3.select("#play").on("click", function() {

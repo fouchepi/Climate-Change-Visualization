@@ -93,6 +93,13 @@ function graph(graph_svg, current_season, current_year) {
 	        .key(function(d) {return d.season;})
 	        .entries(data);
 
+
+	    // Draw the grid
+	  	graph_svg.append("g")			
+	      	.attr("class", "grid")
+	      	.attr("transform", "translate(" + margin.left + ",0)")
+	      	.call(d3.axisLeft(y).ticks(5).tickSize(-width_ww).tickFormat(""));
+
 	  	// Draw the 4 lines
 	    dataNest.forEach(function(d) { 
   			graph_svg.append("path")
@@ -117,12 +124,14 @@ function graph(graph_svg, current_season, current_year) {
 				.attr('class', 'paths')
       			.attr("stroke-linejoin", "round")
       			.attr("stroke-linecap", "round")
-      			.attr("stroke-width", 1.5)
+      			.attr("stroke-width", function(){
+      				if (d.key === current_season) {
+      					return 3;
+      				} else {	return 1;	}
+      			})
       			.attr("d", templine(d.values))
       			.attr("transform", "translate(" + margin.left + "," + 0 + ")");
 	    });
-
-
 
 	    // Draw x Axis
 	    graph_svg.append("g")
@@ -145,11 +154,7 @@ function graph(graph_svg, current_season, current_year) {
 		   	.attr("transform", "translate(" + margin.left + "," + 0 + ")")
 		   	.text("(C)");
 		
-		// Draw the grid
-	  	graph_svg.append("g")			
-	      	.attr("class", "grid")
-	      	.attr("transform", "translate(" + margin.left + ",0)")
-	      	.call(d3.axisLeft(y).ticks(5).tickSize(-width_ww).tickFormat(""))
+		
 
 		// Curve Name
 		// var season = graph_svg.selectAll(".paths")
@@ -289,7 +294,11 @@ function country_graph(country_svg, country, current_season, current_year) {
 				.attr('class', 'paths')
       			.attr("stroke-linejoin", "round")
       			.attr("stroke-linecap", "round")
-      			.attr("stroke-width", 1.5)
+      			.attr("stroke-width", function(){
+      				if (d.key === current_season) {
+      					return 3;
+      				} else {	return 1;	}
+      			})
       			.attr("d", templine(d.values))
       			.attr("transform", "translate(" + margin.left + "," + 0 + ")");
 	    });
