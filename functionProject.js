@@ -4,7 +4,9 @@ function sizeChange() {
 }
 
 function fillMap(svg, color, color_diff, diffmode, data) {
-	d3.select('#year').text('Year: ' + current_year);
+	var year_to_show;
+	if (diffmode) { year_to_show = (current_year - 4) + " - " + current_year} else { year_to_show = current_year }
+	d3.select('#year').text('Year: ' + year_to_show);
 	svg.attr("fill", function(d) {
 		let temp = data.find(x => x.country_id == d.id);
 		if (diffmode) {
