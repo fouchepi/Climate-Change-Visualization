@@ -13,6 +13,7 @@ var width = $("#mapContainer").width();
 var height = $("#mapContainer").height();
 var centered;
 
+var diffmode = false;
 var moving = false;
 var myTimer;
 
@@ -24,12 +25,9 @@ var div = d3.select("#mapContainer")
 d3.select("#myRange")
 	.property("value", current_year);
 
-/*d3.selectAll("input[name='season']")
-.property("checked", (d,i) => i === 0);*/
-
 //Define map projection
 var projection = d3.geoMercator()
-.center([25,78])
+.center([25,74])
 .scale(130);
 
 //Define path generator
@@ -54,7 +52,6 @@ svg.append("rect")
 var g = svg.append("g");
 
 
-
 // ------------ Plot 1 -------------
 var plot1Div = document.getElementById("plot1");
 var ww_svg = d3.select(plot1Div).append('svg').attr('id', 'svg_plot1'),
@@ -68,7 +65,6 @@ var g2 = ww_svg.append("g")
 graph(g2, current_season, current_year);
 
 
-
 // ------------ Plot 2 -------------
 var plot2Div = document.getElementById("plot2");
 var country_svg = d3.select(plot2Div).append('svg').attr('id', 'svg_plot2'),
@@ -79,13 +75,23 @@ var g3 = country_svg.append("g")
 	.attr("id", "country_graph")
 
 
+// ---------- Legend ---------------
+var svg_legend = d3.select("#legend")
+	.append("svg")
+	.attr("id", "leg")
+	.attr("width", 120)
+	.attr("height", 200);
 
+
+// --------- get our data -------------
 d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visualization/master/data/country_temp_season.csv", function(data) {
+
 	let data_filt = data.filter(d => (d.year == current_year) && (d.season == current_season));
 	let data_season = data.filter(d => d.season == current_season);
-	let data_value = data.map(dic => parseFloat(dic.AverageTemperature));
-	//let color = colorDomain(data_value, dict_color[current_season][0], dict_color[current_season][1]);
-	let color = colorDomain(data_value, lowColor, highColor);
+	let data_color_temp = data.map(dic => parseFloat(dic.AverageTemperature));
+	let data_color_diff = data.map(dic => parseFloat(dic.DiffTemp));
+	let color = colorDomain(data_color_temp, false, lowColor, highColor);
+	let color_diff = colorDomain(data_color_diff, true, lowColor, highColor);
 	let zoomed = true;
 
 	d3.json("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visualization/master/data/countries_custom.geo.json", function(json) {
@@ -98,14 +104,16 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 		.append("path")
 		.attr("d", path)
 		.attr("id", function(d) { return d.id; })
-		.call(fillMap, color, data_filt)
+		.call(fillMap, color, color_diff, diffmode, data_filt)
 		.on("click", zoom)
 		.on('mouseover', function(d) {
 			let dt = data.filter(d => (d.year == current_year) && (d.season == current_season));
 			let dt_temp = dt.find(x => x.country_id == d.id);
 			let temp = '';
-			if (typeof dt_temp != 'undefined' && dt_temp.AverageTemperature != '') { 
+			if (typeof dt_temp != 'undefined' && dt_temp.AverageTemperature != '' && !diffmode) { 
 				temp = "<br>" + dt_temp.AverageTemperature + " &degC";
+			} else if(typeof dt_temp != 'undefined' && dt_temp.DiffTemp != '' && diffmode) {
+				temp = "<br>" + dt_temp.DiffTemp;
 			}
 	    	div.transition()		
 			.duration(200)		
@@ -119,22 +127,30 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 			.duration(500)		
 			.style("opacity", 0);
 		});
-		linearLegend(color);
+	});
+
+	d3.select("#colorMode").on("change", function() {
+		diffvalue = this.options[this.selectedIndex].value;
+		if(diffvalue == "diff") {diffmode = true} else {diffmode = false};
+		updateMap(color, color_diff, diffmode, data, current_year, current_season);
 	});
 
 	d3.select("#myRange").on("input", function() {
 		current_year = this.value;
-		updateMap(color, data, current_year, current_season);
+		updateMap(color, color_diff, diffmode, data, current_year, current_season);
 		graph(g2, current_season, current_year)
 	});
 
 	d3.selectAll("input[name='season']").on("change", function() {
 		current_season = this.value;
-		updateMap(color, data, current_year, current_season);
+		updateMap(color, color_diff, diffmode, data, current_year, current_season);
 		//graph(ww_svg, current_season, current_year)
 	});
 
   	d3.select("#play").on("click", function() {
+  		var transition;
+  		if(diffmode) {transition = 600} else {transition = 150}
+
   		var button = d3.select(this);
 		if (button.text() == "Pause") {
 			moving = false;
@@ -151,10 +167,10 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 	  			b.property("value", t);
 
 				current_year = b.property("value");
-				updateMap(color, data, current_year, current_season);
+				updateMap(color, color_diff, diffmode, data, current_year, current_season);
 				// graph(g2, current_season, current_year)
 
-	  		}, 100);
+	  		}, transition);
 	  		button.text("Pause");
 	  	}
   	});

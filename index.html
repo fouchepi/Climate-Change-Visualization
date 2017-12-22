@@ -12,6 +12,10 @@
 		<script src="https://d3js.org/d3.v4.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script src="https://d3js.org/d3-geo-projection.v1.min.js"></script>
+		<script src="https://d3js.org/d3-color.v1.min.js"></script>
+		<script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+		<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
 		<link rel="stylesheet" type="text/css" href="css/style.css">
 		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 	</head>
@@ -40,9 +44,9 @@
 				<div id="year-container">
 					<span>
 						<div style="float: left; text-decoration: underline;">Display method:</div>
-						<select name="selection">
-							<option value="temperature">Temperature</option>
-							<option value="difference">Difference</option>
+						<select name="selection" id="colorMode">
+							<option value=temp>Temperature</option>
+							<option value=diff>Difference</option>
 						</select>
     					<button class="slider-button" type="button" id="play">Play</button>
     				</span>
@@ -64,7 +68,7 @@
 				<div id="plot1"></div>
 			</div> 
 			<div id="chart2">
-				<h5 style="margin:0; text-decoration: underline;">Country Evolution (click on a country)</h5>
+				<h5 style="margin:0; text-decoration: underline;" id="textcplot">Country Evolution (click on a country)</h5>
 				<div id="plot2"></div>
 			</div>
 		</div>
