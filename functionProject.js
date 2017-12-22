@@ -120,6 +120,8 @@ function graph(graph_svg, current_season, current_year) {
       			.attr("transform", "translate(" + margin.left + "," + 0 + ")");
 	    });
 
+
+
 	    // Draw x Axis
 	    graph_svg.append("g")
 	    	.attr("class", "axis")
