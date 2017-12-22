@@ -12,7 +12,7 @@ The process book (pdf) is in the repository.
 
 You can see the website using this [link](https://alexandrepoussard.github.io/Climate-Change-Visualization/) 
 
-And you can find our screencast [here](https://www.google.com)
+And you can find our screencast [here](https://youtu.be/7-g9msQvwlA)
 
 
 ## Requirements
