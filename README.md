@@ -8,11 +8,13 @@ Implemented by
 
 The aim is to give an interactive worlwide view of countries' temperatures during the last century.
 
-The process book (pdf) is in the repository  
-You can see the website using this [link](https://alexandrepoussard.github.io/Climate-Change-Visualization/)   
+The process book (pdf) is in the repository 
+
+You can see the website using this [link](https://alexandrepoussard.github.io/Climate-Change-Visualization/) 
+
 You can find the video [here](https://www.google.com)
 
 
 ## Requirements
 
-Last version of Chrome browser
+Latest version of Chrome browser
