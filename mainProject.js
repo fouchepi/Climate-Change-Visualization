@@ -162,8 +162,8 @@ d3.csv("https://raw.githubusercontent.com/AlexandrePoussard/Climate-Change-Visua
 	  			moving = true;
 	  			var b = d3.select("#myRange");
 	  			var t = (+b.property("value") + 1) % (+b.property("max") + 1);
-	  			//if (t == +b.property("max")) { clearInterval(myTimer); }
-	  			if (t == 0) { t = +b.property("min"); }
+	  			if (t == +b.property("max")) { clearInterval(myTimer); button.text("Replay");}
+	  			//if (t == 0) { t = +b.property("min"); }
 	  			b.property("value", t);
 
 				current_year = b.property("value");
