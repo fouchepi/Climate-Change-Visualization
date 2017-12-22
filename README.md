@@ -5,7 +5,7 @@ The aim is to give an interactive worlwide view of countries' temperatures durin
 Implemented by 
 - Pierre Fouche 
 - Matthias Leroy
-- Alexandre Poussard.
+- Alexandre Poussard
 
 
 The process book (pdf) is in the repository.  
